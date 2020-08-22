@@ -1,0 +1,110 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 400309e47997bb260377b679c98a3a0dc699c75311d379498020f5752291cd29
+
+name:           chulassomock
+version:        0.0.0
+build-type:     Simple
+
+library
+  exposed-modules:
+      Common
+      Controller.LoginHtml
+      Controller.User
+      Lib
+      Model.User
+      Repository.User
+  other-modules:
+      Paths_chulassomock
+  hs-source-dirs:
+      src
+  default-extensions: OverloadedStrings
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , base ==4.*
+    , blaze-html
+    , bytestring
+    , fakedata
+    , hspec
+    , hspec-wai
+    , http-types
+    , mtl
+    , random
+    , scotty
+    , sqlite-simple
+    , text
+    , transformers
+    , wai
+    , wai-extra
+    , warp
+  default-language: Haskell2010
+
+executable chulassomock
+  main-is: Main.hs
+  other-modules:
+      Paths_chulassomock
+  hs-source-dirs:
+      app
+  default-extensions: OverloadedStrings
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , base ==4.*
+    , blaze-html
+    , bytestring
+    , chulassomock
+    , fakedata
+    , hspec
+    , hspec-wai
+    , http-types
+    , mtl
+    , random
+    , scotty
+    , sqlite-simple
+    , text
+    , transformers
+    , wai
+    , wai-extra
+    , warp
+  default-language: Haskell2010
+
+test-suite chulassomock-text
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Controller.LoginHtmlSpec
+      Controller.Mock
+      Controller.UserSpec
+      DummySpec
+      Model.UserSpec
+      Repository.UserSpec
+      Paths_chulassomock
+  hs-source-dirs:
+      test
+  default-extensions: OverloadedStrings
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , base ==4.*
+    , blaze-html
+    , bytestring
+    , chulassomock
+    , fakedata
+    , hspec
+    , hspec-wai
+    , http-types
+    , mtl
+    , random
+    , scotty
+    , sqlite-simple
+    , text
+    , transformers
+    , wai
+    , wai-extra
+    , warp
+  default-language: Haskell2010

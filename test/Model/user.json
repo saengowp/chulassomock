@@ -1,0 +1,29 @@
+{
+
+   "disable":false,
+
+   "email":"6200000000@student.chula.ac.th",
+
+   "firstname":"Steve",
+
+   "firstnameth":"Steve",
+
+   "gecos":"Steve McBoat, ENG",
+
+   "lastname":"McBoat",
+
+   "lastnameth":"McBoat",
+
+   "ouid":"6200000000",
+
+   "roles":[
+
+      "student"
+
+   ],
+
+   "uid":"6200000000ffffffffffffff",
+
+   "username":"6200000000"
+
+}

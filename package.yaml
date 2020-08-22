@@ -1,0 +1,43 @@
+name: chulassomock
+
+dependencies:
+  - base == 4.*
+  - scotty
+  - sqlite-simple
+  - hspec
+  - mtl
+  - text
+  - aeson
+  - fakedata
+  - bytestring
+  - hspec-wai
+  - warp
+  - wai
+  - random 
+  - text
+  - wai-extra
+  - http-types
+  - blaze-html
+  - transformers
+
+ghc-options: -Wall
+
+default-extensions:
+  - OverloadedStrings
+
+library:
+  source-dirs: src
+
+executables:
+  chulassomock:
+    source-dirs: app
+    main: Main.hs
+    dependencies:
+      - chulassomock
+
+tests:
+  chulassomock-text:
+    source-dirs: test
+    main: Spec.hs
+    dependencies:
+      - chulassomock
