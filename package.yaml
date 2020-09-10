@@ -19,6 +19,8 @@ dependencies:
   - http-types
   - blaze-html
   - transformers
+  - binary
+  - network-uri
 
 ghc-options: -Wall
 

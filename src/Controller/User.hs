@@ -13,6 +13,11 @@ import Data.Char (chr, ord)
 import Control.Monad (replicateM)
 import Control.Monad.Trans.Class (lift)
 import Network.HTTP.Types.Status (status401)
+import qualified Network.HTTP.Types.URI as TURI
+import Data.Binary.Builder (toLazyByteString)
+import qualified Data.ByteString.Lazy as LBS
+import qualified Data.Text.Encoding as TE
+import qualified Network.URI as URI
 
 route :: AppScotty ()
 route = do
@@ -28,13 +33,20 @@ login = do
                 (fmap LT.toStrict . lookup "ouid" $ ps) <*> 
                 (fmap LT.toStrict . lookup "firstname" $ ps) <*> 
                 (fmap LT.toStrict . lookup "lastname" $ ps)
-            parsedService = lookup "service" ps
+            parsedService = lookup "service" ps >>= (URI.parseURI . LT.unpack) :: Maybe URI.URI
+            uriToText u = LT.pack $ ((URI.uriToString id u) "") :: LT.Text
         case (parsedUser, parsedService) of
            ((Just usr), (Just srv)) -> do
                 ticket <- createUser usr
-                redirect $ LT.concat [ srv, "?ticket=", LT.fromStrict ticket ]
+                let redirectUrl = uriToText newUri :: LT.Text
+                        where
+                           ticketQuery = ("ticket", Just . TE.encodeUtf8 $ ticket)
+                           orgQueries = TURI.parseQuery . TE.encodeUtf8 . T.pack . URI.uriQuery $ srv
+                           newQueries = orgQueries ++ [ ticketQuery ]
+                           newUri = srv { URI.uriQuery = T.unpack . TE.decodeUtf8 . TURI.renderQuery True $ newQueries }
+                redirect redirectUrl
            (_, (Just srv)) -> do
-                redirect $ LT.concat [ "/html/login.html?service=", srv ]
+                redirect $ LT.concat [ "/html/login.html?service=", LT.pack . URI.escapeURIString URI.isUnescapedInURIComponent . LT.unpack . uriToText $ srv ]
            _ -> text "No service specified"
 
 reject :: AppAction ()

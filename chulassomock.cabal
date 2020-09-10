@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 400309e47997bb260377b679c98a3a0dc699c75311d379498020f5752291cd29
+-- hash: a6d1787a94a133be80e64de02f17de5adc4a96dc5234a0bbcd2229f95793f5ea
 
 name:           chulassomock
 version:        0.0.0
@@ -27,6 +27,7 @@ library
   build-depends:
       aeson
     , base ==4.*
+    , binary
     , blaze-html
     , bytestring
     , fakedata
@@ -34,6 +35,7 @@ library
     , hspec-wai
     , http-types
     , mtl
+    , network-uri
     , random
     , scotty
     , sqlite-simple
@@ -55,6 +57,7 @@ executable chulassomock
   build-depends:
       aeson
     , base ==4.*
+    , binary
     , blaze-html
     , bytestring
     , chulassomock
@@ -63,6 +66,7 @@ executable chulassomock
     , hspec-wai
     , http-types
     , mtl
+    , network-uri
     , random
     , scotty
     , sqlite-simple
@@ -91,6 +95,7 @@ test-suite chulassomock-text
   build-depends:
       aeson
     , base ==4.*
+    , binary
     , blaze-html
     , bytestring
     , chulassomock
@@ -99,6 +104,7 @@ test-suite chulassomock-text
     , hspec-wai
     , http-types
     , mtl
+    , network-uri
     , random
     , scotty
     , sqlite-simple

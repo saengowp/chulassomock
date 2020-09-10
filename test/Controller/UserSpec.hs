@@ -16,7 +16,7 @@ spec :: Spec
 spec = with (appCtx >>= app) $ do
         describe "E2E App Testing" $ do
                 it "Ident Flow" $ do
-                        get "/login?service=http://example.com" `shouldRespondWith` 302 {matchHeaders = ["Location" <:> "/html/login.html?service=http://example.com"]}
+                        get "/login?service=http://example.com" `shouldRespondWith` 302 {matchHeaders = ["Location" <:> "/html/login.html?service=http%3A%2F%2Fexample.com"]}
                 it "Submit Login and Validate Flow" $ do
                         respLogin <- postHtmlForm "/login" [
                                 ("service", "http://example.com"),
@@ -42,6 +42,23 @@ spec = with (appCtx >>= app) $ do
                                           ln `shouldBe` ("Doe" :: Text)
                                     _ -> liftIO $ expectationFailure $ "JSON No propeties"
                           _ -> liftIO . expectationFailure $ "Incorrect data from validation (not json object)"
+
+                it "Redirect with correct parameter concatenation" $ do
+                        respLogin <- postHtmlForm "/login" [
+                                ("service", "http://example.com/login?test=hello&how=ok"),
+                                ("ouid", "1234567890"),
+                                ("firstname","John"),
+                                ("lastname","Doe")]
+
+                        let (SResponse _ headers _) = respLogin
+                        (pure respLogin) `shouldRespondWith` 302
+                        case (lookup "Location" headers) >>= ((stripPrefix "http://example.com/login?test=hello&how=ok&ticket=") . E.decodeUtf8) of
+                                Just _ -> return ()
+                                Nothing -> (liftIO $ expectationFailure ("No ticket Headers:" ++ show headers))
+
+                it "Login page redirect with parameter" $ do
+                        -- http://www.example.com/?a=b&c&d
+                        get "/login?service=http%3A%2F%2Fwww.example.com%2F%3Fa%3Db%26c%26d" `shouldRespondWith` 302 {matchHeaders = ["Location" <:> "/html/login.html?service=http%3A%2F%2Fwww.example.com%2F%3Fa%3Db%26c%26d"]}
                         
                 it "Login with no service" $ do
                         get "/login" `shouldRespondWith` 200
