@@ -4,6 +4,7 @@ module Lib (main, app) where
 
 import System.Environment (getEnv)
 import System.IO.Error (catchIOError)
+import System.IO (hFlush, stdout)
 import Web.Scotty.Trans
 import Control.Monad.Reader (runReaderT)
 import Network.Wai.Handler.Warp (run)
@@ -41,4 +42,5 @@ main = do
         let srvCtx = ServerContext { userRepo = mockUserRepo, appId = e_appId, appSecret = e_appSecret}
         a <- app srvCtx
         putStrLn $ "Starting server on port " ++ show port
+        hFlush stdout
         run port a
