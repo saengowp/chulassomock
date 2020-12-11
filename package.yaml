@@ -3,7 +3,9 @@ name: chulassomock
 dependencies:
   - base == 4.*
   - scotty
-  - sqlite-simple
+  - persistent
+  - persistent-sqlite
+  - persistent-template
   - hspec
   - mtl
   - text
@@ -26,6 +28,8 @@ ghc-options: -Wall
 
 default-extensions:
   - OverloadedStrings
+  - QuasiQuotes
+  - TemplateHaskell
 
 library:
   source-dirs: src

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a6d1787a94a133be80e64de02f17de5adc4a96dc5234a0bbcd2229f95793f5ea
+-- hash: eff202d2f751e02f4b110693550ca895c70f2fb26d85cb6518d7289aa0d2b371
 
 name:           chulassomock
 version:        0.0.0
@@ -16,13 +16,15 @@ library
       Controller.LoginHtml
       Controller.User
       Lib
-      Model.User
-      Repository.User
+      Model.MinUser
+      Model.UserEntity
+      Repository.MockUserRepo
+      Repository.UserRepo
   other-modules:
       Paths_chulassomock
   hs-source-dirs:
       src
-  default-extensions: OverloadedStrings
+  default-extensions: OverloadedStrings QuasiQuotes TemplateHaskell
   ghc-options: -Wall
   build-depends:
       aeson
@@ -36,9 +38,11 @@ library
     , http-types
     , mtl
     , network-uri
+    , persistent
+    , persistent-sqlite
+    , persistent-template
     , random
     , scotty
-    , sqlite-simple
     , text
     , transformers
     , wai
@@ -52,7 +56,7 @@ executable chulassomock
       Paths_chulassomock
   hs-source-dirs:
       app
-  default-extensions: OverloadedStrings
+  default-extensions: OverloadedStrings QuasiQuotes TemplateHaskell
   ghc-options: -Wall
   build-depends:
       aeson
@@ -67,9 +71,11 @@ executable chulassomock
     , http-types
     , mtl
     , network-uri
+    , persistent
+    , persistent-sqlite
+    , persistent-template
     , random
     , scotty
-    , sqlite-simple
     , text
     , transformers
     , wai
@@ -85,12 +91,10 @@ test-suite chulassomock-text
       Controller.Mock
       Controller.UserSpec
       DummySpec
-      Model.UserSpec
-      Repository.UserSpec
       Paths_chulassomock
   hs-source-dirs:
       test
-  default-extensions: OverloadedStrings
+  default-extensions: OverloadedStrings QuasiQuotes TemplateHaskell
   ghc-options: -Wall
   build-depends:
       aeson
@@ -105,9 +109,11 @@ test-suite chulassomock-text
     , http-types
     , mtl
     , network-uri
+    , persistent
+    , persistent-sqlite
+    , persistent-template
     , random
     , scotty
-    , sqlite-simple
     , text
     , transformers
     , wai

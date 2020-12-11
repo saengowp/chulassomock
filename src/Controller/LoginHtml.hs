@@ -5,15 +5,16 @@ import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 import Web.Scotty.Trans
-import Model.User
+import Model.UserEntity
 import Control.Monad.IO.Class
 import Data.Text (unpack)
+import Model.MinUser
 
 route :: AppScotty ()
 route = do
         get "/html/login.html" $ do
                 service <- param "service" `rescue` (\_ -> pure "http://www.example.com")
-                (MinimalUser {m_ouid = ouid, m_firstname = fn, m_lastname = ln})  <- liftIO genMinUser
+                (MinimalUser {ouid = ouid, firstname = fn, lastname = ln})  <- liftIO genMinUser
                 setHeader "Content-Type" "text/html; charset=UTF-8"
                 (raw . renderHtml) $ H.docTypeHtml $ do
                         H.head $ do

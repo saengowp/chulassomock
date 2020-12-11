@@ -2,8 +2,8 @@ module Controller.User (route) where
 
 import Common
 import Web.Scotty.Trans
-import qualified Repository.User as Repo
-import Model.User
+import Repository.UserRepo
+import Model.UserEntity
 import Control.Monad.Trans.Reader (asks, ask)
 import Control.Monad.IO.Class
 import System.Random (randomRIO)
@@ -18,6 +18,7 @@ import Data.Binary.Builder (toLazyByteString)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Text.Encoding as TE
 import qualified Network.URI as URI
+import Model.MinUser
 
 route :: AppScotty ()
 route = do
@@ -63,12 +64,12 @@ reject = do
 serviceValidation :: AppAction ()
 serviceValidation = do
         hs <- headers
-        con <- lift $ asks connection
+        repo <- lift $ asks userRepo
         ServerContext { appId = aid, appSecret = as } <- lift ask
         case (sequence . Prelude.map (\x -> fmap LT.toStrict . lookup x $ hs) $ ["DeeAppId", "DeeAppSecret", "DeeTicket"]) of
           Just [ raid, ras, ticket ]
             | raid == aid && ras == as -> do
-                    user <- liftIO $ Repo.get con ticket
+                    user <- liftIO . fromTicket repo $ ticket
                     case user of
                       Just u -> json u
                       Nothing -> reject
@@ -82,9 +83,9 @@ hexChar v
 
 createUser :: MinimalUser -> AppAction T.Text
 createUser user = do
-        ticketId <- liftIO . fmap T.pack . replicateM 24 . fmap hexChar . randomRIO $ (0 :: Int,16 :: Int)
-        con <- lift $ asks connection
-        liftIO $ Repo.add con (fromMinimalUser user) ticketId
+        -- ticketId <- liftIO . fmap T.pack . replicateM 24 . fmap hexChar . randomRIO $ (0 :: Int,16 :: Int)
+        repo <- lift $ asks userRepo
+        ticketId <- liftIO . createTicket repo $ (fromMinimalUser user)
         return ticketId
 
         

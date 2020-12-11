@@ -1,13 +1,12 @@
 module Controller.Mock (appCtx) where
 
 import Common
-import Database.SQLite.Simple (open)
+import Repository.MockUserRepo
 
 appCtx :: IO ServerContext
 appCtx = do
-        con <- open ":memory:"
         return $ ServerContext {
-                connection = con,
+                userRepo = mockUserRepo,
                 appSecret = "APPSECRET",
                 appId = "APPID"
                                }
