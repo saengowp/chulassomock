@@ -16,7 +16,7 @@ import Common
 import qualified Controller.User as UserC (route)
 import qualified Controller.LoginHtml as LoginC (route)
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
-import TicketStorage.Base
+import TicketStorage.OnTicket
 
 hello :: AppAction ()
 hello = text "ChulaSSO Mock Server"
@@ -37,7 +37,7 @@ serverContextFromEnv = ServerContext <$>
                                 getEnvDef "APPID" "APPID" <*> 
                                 getEnvDef "APPSECRET" "APPSECRET" <*>
                                 (read <$> getEnvDef "PORT" "8080") <*>
-                                nothingStorage
+                                onTicketStore 
 
 main :: IO ()
 main = do

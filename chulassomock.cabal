@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 630f267808e09e126b2dc6f56a3d6d7fa7bd93db4516ed67cf7e9a3daea98b7f
+-- hash: 6f77bab2e8d6eab22355e20e4f83a2c98876e69a39c7f5b228d8ce0d7eba8a27
 
 name:           chulassomock
 version:        0.0.0
@@ -19,6 +19,7 @@ library
       Model.MinUser
       Model.User
       TicketStorage.Base
+      TicketStorage.OnTicket
   other-modules:
       Paths_chulassomock
   hs-source-dirs:
@@ -28,13 +29,17 @@ library
   build-depends:
       aeson
     , base ==4.*
+    , base64-bytestring
     , binary
     , blaze-html
     , bytestring
+    , cereal
+    , cryptonite
     , fakedata
     , hspec
     , hspec-wai
     , http-types
+    , memory
     , mtl
     , network-uri
     , persistent
@@ -42,7 +47,6 @@ library
     , persistent-template
     , random
     , scotty
-    , sqlite-simple
     , text
     , transformers
     , wai
@@ -61,14 +65,18 @@ executable chulassomock
   build-depends:
       aeson
     , base ==4.*
+    , base64-bytestring
     , binary
     , blaze-html
     , bytestring
+    , cereal
     , chulassomock
+    , cryptonite
     , fakedata
     , hspec
     , hspec-wai
     , http-types
+    , memory
     , mtl
     , network-uri
     , persistent
@@ -76,7 +84,6 @@ executable chulassomock
     , persistent-template
     , random
     , scotty
-    , sqlite-simple
     , text
     , transformers
     , wai
@@ -93,6 +100,7 @@ test-suite chulassomock-text
       HelloSpec
       Mock
       Model.MinUserSpec
+      TicketStorage.OnTicketSpec
       Paths_chulassomock
   hs-source-dirs:
       test
@@ -101,14 +109,18 @@ test-suite chulassomock-text
   build-depends:
       aeson
     , base ==4.*
+    , base64-bytestring
     , binary
     , blaze-html
     , bytestring
+    , cereal
     , chulassomock
+    , cryptonite
     , fakedata
     , hspec
     , hspec-wai
     , http-types
+    , memory
     , mtl
     , network-uri
     , persistent
@@ -116,7 +128,6 @@ test-suite chulassomock-text
     , persistent-template
     , random
     , scotty
-    , sqlite-simple
     , text
     , transformers
     , wai

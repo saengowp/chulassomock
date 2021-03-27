@@ -10,7 +10,7 @@ import Data.Text.Lazy as LT
 import Data.Char (chr, ord)
 import Control.Monad (replicateM)
 import Control.Monad.Trans.Class (lift)
-import Network.HTTP.Types.Status (status401)
+import Network.HTTP.Types.Status (status401, status400)
 import Network.HTTP.Types.URI (QueryItem, parseQuery, renderQuery, urlEncode)
 import Data.Binary.Builder (toLazyByteString)
 import qualified Data.ByteString.Lazy as LBS
@@ -52,7 +52,9 @@ login = do
            (_, Just srv) -> do
                 let encodedServiceUrl = LT.pack . URI.escapeURIString URI.isUnescapedInURIComponent . LT.unpack . uriToText $ srv
                 redirect $ LT.concat [ "/html/login.html?service=", encodedServiceUrl]
-           _ -> text "No service specified"
+           _ -> do
+                   status status400 
+                   text "No service specified"
 
 reject :: AppAction ()
 reject = do

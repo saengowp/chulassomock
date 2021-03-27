@@ -1,11 +1,11 @@
 module Mock (appCtx) where
 
 import Common
-import TicketStorage.Base
+import TicketStorage.OnTicket
 
 appCtx :: IO ServerContext
 appCtx = do
-        ns <- nothingStorage
+        ns <- onTicketStore 
         return $ ServerContext {
                         appSecret = "APPSECRET",
                         appId = "APPID",

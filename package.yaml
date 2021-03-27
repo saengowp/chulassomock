@@ -23,7 +23,10 @@ dependencies:
   - transformers
   - binary
   - network-uri
-  - sqlite-simple
+  - cryptonite
+  - cereal
+  - base64-bytestring
+  - memory
 
 ghc-options: -Wall
 
