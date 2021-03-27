@@ -54,7 +54,7 @@ login = do
                 redirect $ LT.concat [ "/html/login.html?service=", encodedServiceUrl]
            _ -> do
                    status status400 
-                   text "No service specified"
+                   text "No service specified or service is not an URL"
 
 reject :: AppAction ()
 reject = do
