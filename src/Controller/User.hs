@@ -11,12 +11,16 @@ import Data.Char (chr, ord)
 import Control.Monad (replicateM)
 import Control.Monad.Trans.Class (lift)
 import Network.HTTP.Types.Status (status401)
-import qualified Network.HTTP.Types.URI as TURI
+import Network.HTTP.Types.URI (QueryItem, parseQuery, renderQuery, urlEncode)
 import Data.Binary.Builder (toLazyByteString)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Text.Encoding as TE
 import qualified Network.URI as URI
 import Model.MinUser
+import TicketStorage.Base
+import Data.ByteString.Char8 as BS8
+import Control.Monad.Trans.Maybe
+import Data.Maybe
 
 route :: AppScotty ()
 route = do
@@ -25,27 +29,29 @@ route = do
         get "/serviceValidation"  serviceValidation
         post "/serviceValidation" serviceValidation
 
+addQueryParam :: QueryItem -> URI.URI -> URI.URI
+addQueryParam q u = u {URI.uriQuery = BS8.unpack . renderQuery True $ newQueries}
+        where orgQueries = parseQuery . BS8.pack . URI.uriQuery $  u
+              newQueries = orgQueries ++ [q]
+
 login :: AppAction ()
 login = do
+        ticketContext <- lift $ asks ticketCtx
         ps <- params
-        let parsedUser = MinimalUser <$> 
-                (fmap LT.toStrict . lookup "ouid" $ ps) <*> 
-                (fmap LT.toStrict . lookup "firstname" $ ps) <*> 
-                (fmap LT.toStrict . lookup "lastname" $ ps)
-            parsedService = lookup "service" ps >>= (URI.parseURI . LT.unpack) :: Maybe URI.URI
+        let [mouid, mfirstname, mlastname] =
+                Prelude.map (\key -> LT.toStrict <$> lookup key ps ) ["ouid", "firstname", "lastname"]
+            mUser = MinimalUser <$> mouid <*> mfirstname <*> mlastname
+            mService = lookup "service" ps >>= URI.parseURI . LT.unpack 
             uriToText u = LT.pack $ URI.uriToString id u "" :: LT.Text
-        case (parsedUser, parsedService) of
+        case (mUser, mService) of
            (Just usr, Just srv) -> do
-                ticket <- createUser usr
-                let redirectUrl = uriToText newUri :: LT.Text
-                        where
-                           ticketQuery = ("ticket", Just . TE.encodeUtf8 $ ticket)
-                           orgQueries = TURI.parseQuery . TE.encodeUtf8 . T.pack . URI.uriQuery $ srv
-                           newQueries = orgQueries ++ [ ticketQuery ]
-                           newUri = srv { URI.uriQuery = T.unpack . TE.decodeUtf8 . TURI.renderQuery True $ newQueries }
+                ticket <- liftIO $ createTicketFromMUser ticketContext usr
+                let ticketQuery = ("ticket", Just $ BS8.pack . T.unpack $ ticket)
+                    redirectUrl = uriToText . addQueryParam ticketQuery $ srv
                 redirect redirectUrl
            (_, Just srv) -> do
-                redirect $ LT.concat [ "/html/login.html?service=", LT.pack . URI.escapeURIString URI.isUnescapedInURIComponent . LT.unpack . uriToText $ srv ]
+                let encodedServiceUrl = LT.pack . URI.escapeURIString URI.isUnescapedInURIComponent . LT.unpack . uriToText $ srv
+                redirect $ LT.concat [ "/html/login.html?service=", encodedServiceUrl]
            _ -> text "No service specified"
 
 reject :: AppAction ()
@@ -58,33 +64,19 @@ reject = do
                 \ }"
            finish
 
-
 serviceValidation :: AppAction ()
 serviceValidation = do
         hs <- headers
-        -- repo <- lift $ asks userRepo
-        ServerContext { appId = aid, appSecret = as } <- lift ask
-        {- case (sequence . Prelude.map (\x -> fmap LT.toStrict . lookup x $ hs) $ ["DeeAppId", "DeeAppSecret", "DeeTicket"]) of
-          Just [ raid, ras, ticket ]
-            | raid == aid && ras == as -> do
-                    user <- liftIO . fromTicket repo $ ticket
-                    case user of
-                      Just u -> json u
-                      Nothing -> reject
-          _ -> reject -}
-        return ()
-
-hexChar :: Int -> Char
-hexChar v
-        | v < 10 = chr (ord '0' + v)
-        | otherwise = chr (ord 'a' + v - 10)
-
-createUser :: MinimalUser -> AppAction T.Text
-createUser user = do
-        -- ticketId <- liftIO . fmap T.pack . replicateM 24 . fmap hexChar . randomRIO $ (0 :: Int,16 :: Int)
-        {- repo <- lift $ asks userRepo
-        ticketId <- liftIO . createTicket repo $ (fromMinimalUser user)
-        return ticketId -}
-        return "eeee"
+        ServerContext { appId = appid, appSecret = appsecret, ticketCtx = ticketC} <- lift ask
+        user <- runMaybeT $ do
+                let assertV v = if v then return () else MaybeT (return Nothing)
+                    lookupH h = MaybeT . return $ lookup h hs
+                hAppId <- lookupH "DeeAppId"
+                assertV $ hAppId == LT.pack appid
+                hAppSecret <- lookupH "DeeAppSecret"
+                assertV $ hAppSecret == LT.pack appsecret
+                hTicket <- lookupH "DeeTicket"
+                MaybeT . liftIO $ getMUserFromTicket ticketC (T.pack . LT.unpack $ hTicket)
+        maybe reject (json . fromMinimalUser) user
 
         

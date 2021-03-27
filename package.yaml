@@ -23,6 +23,7 @@ dependencies:
   - transformers
   - binary
   - network-uri
+  - sqlite-simple
 
 ghc-options: -Wall
 
