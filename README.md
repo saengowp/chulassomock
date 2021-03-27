@@ -7,7 +7,7 @@
 *ChulaSSOMock* can be used as a substitute to *ChulaSSO* when developing a service that need to authenticate Chula student.
 *ChulaSSOMock* can offer following advantages :
 
-- Reduced security risk. No need to distribute the real app secet.
+- Reduced security risk. No need to distribute the real app secret.
 - Impersonate any student's id and name
 - Accurate behaviour
 
