@@ -4,13 +4,7 @@
 module Model.MinUser where
 
 import Data.Text as T
-import Data.Aeson
-import GHC.Generics
-import Faker as FK
-import qualified Faker.Name as F
-import Control.Monad (replicateM)
-import System.Random (randomRIO, newStdGen)
-import Model.UserEntity
+import Model.User as User
 
 data MinimalUser = MinimalUser {
         ouid :: Text,
@@ -20,26 +14,16 @@ data MinimalUser = MinimalUser {
                                deriving Show
 
 fromMinimalUser :: MinimalUser -> User
-fromMinimalUser MinimalUser{ouid = i, firstname = fn, lastname = ln} = 
+fromMinimalUser (MinimalUser i fn ln) = 
         User {
-                userEmail = T.concat [i , "@student.chula.ac.th"],
-                userFirstname = fn,
-                userFirstnameth = fn,
-                userGecos = T.concat [ fn , " " , ln , ", ENG"],
-                userLastname = ln,
-                userLastnameth = ln,
-                userOuid = i,
-                userRoles = ["student"],
-                userUid = T.concat [ i , (T.replicate (24 - T.length i) "f")],
-                userUsername = i
+                email = T.concat [i , "@student.chula.ac.th"],
+                User.firstname = fn,
+                firstnameth = fn,
+                gecos = T.concat [ fn , " " , ln , ", ENG"],
+                User.lastname = ln,
+                lastnameth = ln,
+                User.ouid = i,
+                roles = ["student"],
+                uid = T.concat [i , T.replicate (24 - T.length i) "f"],
+                username = i
         }
-
-genMinUser :: IO MinimalUser
-genMinUser = do
-        nms <- splitOn " " <$> FK.generateWithSettings (FK.setNonDeterministic FK.defaultFakerSettings) F.name 
-        let fn = Prelude.head nms
-            ln = T.intercalate " " $ Prelude.tail nms
-        let genId :: IO Text
-            genId = pack <$> (replicateM 10 (randomRIO ('0', '9')))
-        i <- genId
-        return $ MinimalUser {firstname = fn, lastname = ln, ouid = i}

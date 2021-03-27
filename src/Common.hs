@@ -9,14 +9,14 @@ import Web.Scotty.Trans
 import Data.Text (Text)
 import qualified Data.Text.Lazy as L
 import Control.Monad.Reader (ReaderT)
-import Repository.UserRepo (UserRepo)
+import Network.Wai.Handler.Warp (Port)
 
 type Context = ReaderT ServerContext IO
 type AppAction = ActionT L.Text Context
 type AppScotty = ScottyT L.Text Context
 
 data ServerContext = ServerContext {
-      userRepo :: UserRepo,
-      appId :: Text,
-      appSecret :: Text
+      appId :: String,
+      appSecret :: String,
+      port :: Port
     }

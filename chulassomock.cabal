@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: eff202d2f751e02f4b110693550ca895c70f2fb26d85cb6518d7289aa0d2b371
+-- hash: a01bd34156f906e20365bd13ca69d7e3617233908fb4082721c419db67091a25
 
 name:           chulassomock
 version:        0.0.0
@@ -17,9 +17,7 @@ library
       Controller.User
       Lib
       Model.MinUser
-      Model.UserEntity
-      Repository.MockUserRepo
-      Repository.UserRepo
+      Model.User
   other-modules:
       Paths_chulassomock
   hs-source-dirs:
@@ -90,7 +88,6 @@ test-suite chulassomock-text
       Controller.LoginHtmlSpec
       Controller.Mock
       Controller.UserSpec
-      DummySpec
       Paths_chulassomock
   hs-source-dirs:
       test
