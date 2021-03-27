@@ -4,23 +4,15 @@ import Common
 import Web.Scotty.Trans
 import Control.Monad.Trans.Reader (asks, ask)
 import Control.Monad.IO.Class
-import System.Random (randomRIO)
 import Data.Text as T
 import Data.Text.Lazy as LT
-import Data.Char (chr, ord)
-import Control.Monad (replicateM)
 import Control.Monad.Trans.Class (lift)
 import Network.HTTP.Types.Status (status401, status400)
-import Network.HTTP.Types.URI (QueryItem, parseQuery, renderQuery, urlEncode)
-import Data.Binary.Builder (toLazyByteString)
-import qualified Data.ByteString.Lazy as LBS
-import qualified Data.Text.Encoding as TE
+import Network.HTTP.Types.URI (QueryItem, parseQuery, renderQuery)
 import qualified Network.URI as URI
 import Model.MinUser
-import TicketStorage.Base
 import Data.ByteString.Char8 as BS8
 import Control.Monad.Trans.Maybe
-import Data.Maybe
 
 route :: AppScotty ()
 route = do

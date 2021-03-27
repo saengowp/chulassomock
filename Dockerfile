@@ -1,4 +1,4 @@
-FROM fpco/stack-build:lts-16.25 AS build
+FROM haskell:8.8.4 AS build
 
 RUN mkdir -p /opt/chulassomock
 WORKDIR /opt/chulassomock

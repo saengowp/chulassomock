@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6f77bab2e8d6eab22355e20e4f83a2c98876e69a39c7f5b228d8ce0d7eba8a27
+-- hash: 20d0c10024af32b1867b887c6290508e4503c812726f8b595f76ec93cd958b60
 
 name:           chulassomock
 version:        0.0.0
@@ -35,16 +35,12 @@ library
     , bytestring
     , cereal
     , cryptonite
-    , fakedata
     , hspec
     , hspec-wai
     , http-types
     , memory
     , mtl
     , network-uri
-    , persistent
-    , persistent-sqlite
-    , persistent-template
     , random
     , scotty
     , text
@@ -72,16 +68,12 @@ executable chulassomock
     , cereal
     , chulassomock
     , cryptonite
-    , fakedata
     , hspec
     , hspec-wai
     , http-types
     , memory
     , mtl
     , network-uri
-    , persistent
-    , persistent-sqlite
-    , persistent-template
     , random
     , scotty
     , text
@@ -116,16 +108,12 @@ test-suite chulassomock-text
     , cereal
     , chulassomock
     , cryptonite
-    , fakedata
     , hspec
     , hspec-wai
     , http-types
     , memory
     , mtl
     , network-uri
-    , persistent
-    , persistent-sqlite
-    , persistent-template
     , random
     , scotty
     , text

@@ -3,14 +3,10 @@ name: chulassomock
 dependencies:
   - base == 4.*
   - scotty
-  - persistent
-  - persistent-sqlite
-  - persistent-template
   - hspec
   - mtl
   - text
   - aeson
-  - fakedata
   - bytestring
   - hspec-wai
   - warp

@@ -9,8 +9,6 @@ import Control.Monad.Reader (runReaderT)
 import Network.Wai.Handler.Warp (run)
 import Network.Wai (Application)
 import Data.Maybe
-import Data.Text.Lazy
-import qualified Data.Text as T
 
 import Common
 import qualified Controller.User as UserC (route)
