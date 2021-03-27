@@ -1,4 +1,4 @@
-module Controller.Mock (appCtx) where
+module Mock (appCtx) where
 
 import Common
 

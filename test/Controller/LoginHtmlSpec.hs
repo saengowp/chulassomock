@@ -4,7 +4,7 @@ import Test.Hspec
 import Test.Hspec.Wai
 
 import Lib (app)
-import Controller.Mock (appCtx)
+import Mock (appCtx)
 
 spec :: Spec
 spec = with (appCtx >>= app) $ do

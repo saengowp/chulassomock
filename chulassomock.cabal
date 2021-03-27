@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a01bd34156f906e20365bd13ca69d7e3617233908fb4082721c419db67091a25
+-- hash: 51659ad1ee232c01aca86f9472c1cf98ad53481a1fbd3e49684764a899b27488
 
 name:           chulassomock
 version:        0.0.0
@@ -86,8 +86,10 @@ test-suite chulassomock-text
   main-is: Spec.hs
   other-modules:
       Controller.LoginHtmlSpec
-      Controller.Mock
       Controller.UserSpec
+      HelloSpec
+      Mock
+      Model.MinUserSpec
       Paths_chulassomock
   hs-source-dirs:
       test

@@ -16,7 +16,7 @@ data User = User {
         roles :: [Text],
         uid :: Text,
         username :: Text
-} deriving (Generic, Show)
+} deriving (Generic, Show, Eq)
 
 instance ToJSON User
 

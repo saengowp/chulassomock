@@ -5,13 +5,13 @@ module Model.MinUser where
 
 import Data.Text as T
 import Model.User as User
+import GHC.Generics
 
 data MinimalUser = MinimalUser {
-        ouid :: Text,
-        firstname :: Text,
-        lastname :: Text
-                               }
-                               deriving Show
+                        ouid :: Text,
+                        firstname :: Text,
+                        lastname :: Text
+                } deriving (Generic, Show, Eq)
 
 fromMinimalUser :: MinimalUser -> User
 fromMinimalUser (MinimalUser i fn ln) = 
