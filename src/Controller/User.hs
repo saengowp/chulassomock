@@ -14,6 +14,7 @@ import Model.MinUser
 import Data.ByteString.Char8 as BS8
 import Control.Monad.Trans.Except
 import Data.Aeson
+import Data.Bifunctor
 
 route :: AppScotty ()
 route = do
@@ -68,11 +69,14 @@ serviceValidation = do
         hs <- headers
         ServerContext { appId = appid, appSecret = appsecret, ticketCtx = ticketC} <- lift ask
         user <- runExceptT $ do
-                let assertV expected actual valname = 
+                let normHeader = Prelude.map (first LT.toLower) hs
+                    headersA = Prelude.concatMap (\(a,b) -> LT.unpack a ++ ": " ++ LT.unpack b ++ ";")  hs
+                    assertV expected actual valname = 
                         if expected == actual 
                                 then return () 
-                                else throwE ("Assertion failed: expect " ++ expected ++ " got " ++ valname)
-                    lookupH h = maybe (throwE ("Header " ++ LT.unpack h ++ " not found")) return $ lookup h hs
+                                else throwE ("Assertion failed: expect " ++ expected ++ " got " ++ actual ++ " for " ++ valname)
+                    lookupH h = maybe (throwE ("Header " ++ LT.unpack h ++ " not found. header=" ++ headersA)) return $ lookup nh normHeader
+                              where nh = LT.toLower h
                 hAppId <- lookupH "DeeAppId"
                 assertV appid (LT.unpack hAppId) "AppId"
                 hAppSecret <- lookupH "DeeAppSecret"
