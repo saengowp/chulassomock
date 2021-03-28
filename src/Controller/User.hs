@@ -12,7 +12,8 @@ import Network.HTTP.Types.URI (QueryItem, parseQuery, renderQuery)
 import qualified Network.URI as URI
 import Model.MinUser
 import Data.ByteString.Char8 as BS8
-import Control.Monad.Trans.Maybe
+import Control.Monad.Trans.Except
+import Data.Aeson
 
 route :: AppScotty ()
 route = do
@@ -48,29 +49,37 @@ login = do
                    status status400 
                    text "No service specified or service is not an URL"
 
-reject :: AppAction ()
-reject = do
+data Rejection = Rejection String String String
+
+instance ToJSON Rejection where
+        toJSON (Rejection rt rc rh) =
+                object ["type" .= rt, "content" .= rc, "hint" .= rh]
+
+reject :: String -> AppAction ()
+reject reason = do
            setHeader "Content-Type" "application/json; charset=utf-8"
            status status401
-           raw "{ \
-                  \ \"type\" : \"error\", \
-                  \ \"content\" : \"invalid ticket/permission\" \
-                \ }"
+           let res = Rejection "error" "invalid ticket/permission" reason
+           raw $ encode res 
            finish
 
 serviceValidation :: AppAction ()
 serviceValidation = do
         hs <- headers
         ServerContext { appId = appid, appSecret = appsecret, ticketCtx = ticketC} <- lift ask
-        user <- runMaybeT $ do
-                let assertV v = if v then return () else MaybeT (return Nothing)
-                    lookupH h = MaybeT . return $ lookup h hs
+        user <- runExceptT $ do
+                let assertV expected actual valname = 
+                        if expected == actual 
+                                then return () 
+                                else throwE ("Assertion failed: expect " ++ expected ++ " got " ++ valname)
+                    lookupH h = maybe (throwE ("Header " ++ LT.unpack h ++ " not found")) return $ lookup h hs
                 hAppId <- lookupH "DeeAppId"
-                assertV $ hAppId == LT.pack appid
+                assertV appid (LT.unpack hAppId) "AppId"
                 hAppSecret <- lookupH "DeeAppSecret"
-                assertV $ hAppSecret == LT.pack appsecret
+                assertV appsecret (LT.unpack hAppSecret) "AppSecret"
                 hTicket <- lookupH "DeeTicket"
-                MaybeT . liftIO $ getMUserFromTicket ticketC (T.pack . LT.unpack $ hTicket)
-        maybe reject (json . fromMinimalUser) user
+                u <- liftIO $ getMUserFromTicket ticketC (T.pack . LT.unpack $ hTicket)
+                maybe (throwE "Can't retrieve the user from the given ticket") return u
+        either reject (Web.Scotty.Trans.json . fromMinimalUser) user
 
         
