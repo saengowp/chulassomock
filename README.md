@@ -13,6 +13,8 @@
 
 ## Usage
 
+Docker image is available at [Docker](https://hub.docker.com/r/pay2630/chulassomock)
+
 1. Install docker
 2. Download the image: `docker pull pay2630/chulassomock`
 3. Run: `docker run pay2630/chulassomock`
